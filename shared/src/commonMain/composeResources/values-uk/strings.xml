@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">EstateHub</string>
+
+    <string name="onboarding_skip">Пропустити</string>
+    <string name="onboarding_next">Далі</string>
+    <string name="onboarding_get_started">Почати</string>
+
+    <string name="onboarding_title_1">Знайдіть своє ідеальне житло</string>
+    <string name="onboarding_desc_1">Шукайте квартири, будинки й офіси по місту та фільтруйте за ціною, категорією й зручностями.</string>
+
+    <string name="onboarding_title_2">Зберігайте улюблене</string>
+    <string name="onboarding_desc_2">Додавайте оголошення в обране, читайте відгуки й порівнюйте варіанти в одному місці.</string>
+
+    <string name="onboarding_title_3">Запис на перегляд за секунди</string>
+    <string name="onboarding_desc_3">Подайте заявку, узгодьте час перегляду з рієлтором і стежте за статусом угоди.</string>
+
+    <string name="onboarding_title_4">Спілкуйтесь і укладайте угоду</string>
+    <string name="onboarding_desc_4">Пишіть власникам і рієлторам, робіть пропозицію та підписуйте договір, не виходячи з додатка.</string>
+
+    <string name="home_title">Ласкаво просимо до EstateHub</string>
+    <string name="home_subtitle">Оголошення з API EstateHub з’являться тут у наступних лабораторних.</string>
+    <string name="home_dark_theme">Темна тема</string>
+    <string name="home_show_onboarding">Показати вступ ще раз</string>
+</resources>

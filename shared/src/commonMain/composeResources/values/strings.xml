@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">EstateHub</string>
+
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next</string>
+    <string name="onboarding_get_started">Get started</string>
+
+    <string name="onboarding_title_1">Find your perfect place</string>
+    <string name="onboarding_desc_1">Search apartments, houses and offices across the city and filter by price, category and amenities.</string>
+
+    <string name="onboarding_title_2">Save what you love</string>
+    <string name="onboarding_desc_2">Add listings to favorites, read reviews and compare options in one place.</string>
+
+    <string name="onboarding_title_3">Book a viewing in seconds</string>
+    <string name="onboarding_desc_3">Send an application, agree on a viewing time with a realtor and follow the status of your deal.</string>
+
+    <string name="onboarding_title_4">Chat and close the deal</string>
+    <string name="onboarding_desc_4">Message owners and realtors, make an offer and sign the contract without leaving the app.</string>
+
+    <string name="home_title">Welcome to EstateHub</string>
+    <string name="home_subtitle">Listings from the EstateHub API will appear here in the next labs.</string>
+    <string name="home_dark_theme">Dark theme</string>
+    <string name="home_show_onboarding">Show onboarding again</string>
+</resources>
