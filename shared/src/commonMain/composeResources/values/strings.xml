@@ -77,4 +77,23 @@
     <string name="settings_account">Account</string>
     <string name="settings_guest">Guest</string>
     <string name="settings_sign_out">Sign out</string>
+
+    <!-- Details -->
+    <string name="details_back">Back</string>
+    <string name="details_not_found">Listing not found</string>
+    <string name="details_rooms">Rooms</string>
+    <string name="details_area">Area</string>
+    <string name="details_floor">Floor</string>
+    <string name="details_floors">Floors</string>
+    <string name="details_land">Land</string>
+    <string name="details_floor_of">%1$d of %2$d</string>
+    <string name="details_description">Description</string>
+    <string name="details_features">Features</string>
+    <string name="details_building_type">Building type</string>
+    <string name="details_heating">Heating</string>
+    <string name="details_condition">Condition</string>
+    <string name="details_year">Year built</string>
+    <string name="details_realtor">Realtor</string>
+    <string name="details_write">Message</string>
+    <string name="details_call">Call</string>
 </resources>

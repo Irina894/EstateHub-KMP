@@ -23,6 +23,19 @@ sealed interface AuthResult {
 
 enum class ListingCategory { APARTMENT, HOUSE, LAND }
 
+/** Рієлтор, відповідальний за оголошення. */
+data class Realtor(val name: String, val phone: String)
+
+/** Розширений опис оголошення (екран деталей). */
+data class ListingDetails(
+    val description: String = "",
+    val buildingType: String = "",
+    val heating: String = "",
+    val condition: String = "",
+    val yearBuilt: Int? = null,
+    val realtor: Realtor? = null,
+)
+
 /** Модель оголошення. Поля відповідають сутності Property з Catalog API (лаби .NET). */
 data class Listing(
     val id: Long,
@@ -35,6 +48,7 @@ data class Listing(
     val floor: Int? = null,
     val totalFloors: Int? = null,
     val landAres: Int? = null,
+    val details: ListingDetails = ListingDetails(),
 ) {
     val pricePerSqm: Int get() = if (areaM2 > 0) priceUsd / areaM2 else 0
     val address: String get() = "$city, $street"

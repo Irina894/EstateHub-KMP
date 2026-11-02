@@ -29,4 +29,11 @@ interface AppSettingsRepository {
 
 interface ListingsRepository {
     fun getAll(): List<Listing>
+    fun getById(id: Long): Listing?
+}
+
+/** Обрані оголошення (ідентифікатори зберігаються через multiplatform-settings). */
+interface FavoritesRepository {
+    val favoriteIds: StateFlow<Set<Long>>
+    fun toggle(id: Long)
 }

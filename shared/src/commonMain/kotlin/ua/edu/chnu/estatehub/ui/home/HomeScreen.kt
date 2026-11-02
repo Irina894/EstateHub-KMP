@@ -56,6 +56,7 @@ fun HomeRoute(
     homeViewModel: HomeViewModel,
     settingsViewModel: SettingsViewModel,
     onNavigate: (Route) -> Unit,
+    onOpenDetails: (Long) -> Unit,
 ) {
     val state by homeViewModel.state.collectAsState()
 
@@ -89,8 +90,8 @@ fun HomeRoute(
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when (state.tab) {
-                HomeTab.SEARCH -> SearchTab(state = state, onIntent = homeViewModel::onIntent)
-                HomeTab.FAVORITES -> FavoritesTab(state = state, onIntent = homeViewModel::onIntent)
+                HomeTab.SEARCH -> SearchTab(state = state, onIntent = homeViewModel::onIntent, onOpen = onOpenDetails)
+                HomeTab.FAVORITES -> FavoritesTab(state = state, onIntent = homeViewModel::onIntent, onOpen = onOpenDetails)
                 HomeTab.SETTINGS -> SettingsRoute(viewModel = settingsViewModel, onNavigate = onNavigate)
             }
         }
@@ -119,7 +120,7 @@ private fun androidx.compose.foundation.layout.RowScope.TabItem(
 }
 
 @Composable
-private fun SearchTab(state: HomeState, onIntent: (HomeIntent) -> Unit) {
+private fun SearchTab(state: HomeState, onIntent: (HomeIntent) -> Unit, onOpen: (Long) -> Unit) {
     val keyboard = LocalSoftwareKeyboardController.current
 
     LazyColumn(
@@ -160,13 +161,14 @@ private fun SearchTab(state: HomeState, onIntent: (HomeIntent) -> Unit) {
                 listing = listing,
                 isFavorite = listing.id in state.favoriteIds,
                 onToggleFavorite = { onIntent(HomeIntent.ToggleFavorite(listing.id)) },
+                onClick = { onOpen(listing.id) },
             )
         }
     }
 }
 
 @Composable
-private fun FavoritesTab(state: HomeState, onIntent: (HomeIntent) -> Unit) {
+private fun FavoritesTab(state: HomeState, onIntent: (HomeIntent) -> Unit, onOpen: (Long) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 24.dp),
@@ -187,6 +189,7 @@ private fun FavoritesTab(state: HomeState, onIntent: (HomeIntent) -> Unit) {
                 listing = listing,
                 isFavorite = true,
                 onToggleFavorite = { onIntent(HomeIntent.ToggleFavorite(listing.id)) },
+                onClick = { onOpen(listing.id) },
             )
         }
     }
@@ -227,8 +230,10 @@ private fun ListingCard(
     listing: Listing,
     isFavorite: Boolean,
     onToggleFavorite: () -> Unit,
+    onClick: () -> Unit,
 ) {
     Card(
+        onClick = onClick,
         modifier = Modifier.widthIn(max = 640.dp).fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),

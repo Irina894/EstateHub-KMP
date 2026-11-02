@@ -14,3 +14,7 @@ class GetListingsUseCase(private val repository: ListingsRepository) {
         }
     }
 }
+
+class GetListingByIdUseCase(private val repository: ListingsRepository) {
+    operator fun invoke(id: Long): Listing? = repository.getById(id)
+}

@@ -6,6 +6,7 @@ import ua.edu.chnu.estatehub.domain.model.PasswordError
 import ua.edu.chnu.estatehub.domain.model.UsernameError
 import ua.edu.chnu.estatehub.domain.repository.ListingsRepository
 import ua.edu.chnu.estatehub.domain.repository.OnboardingRepository
+import ua.edu.chnu.estatehub.domain.usecase.GetListingByIdUseCase
 import ua.edu.chnu.estatehub.domain.usecase.GetListingsUseCase
 import ua.edu.chnu.estatehub.domain.usecase.IsOnboardingCompletedUseCase
 import ua.edu.chnu.estatehub.domain.usecase.SaveOnboardingResultUseCase
@@ -68,6 +69,8 @@ private class FakeListingsRepository : ListingsRepository {
         Listing(1, ListingCategory.APARTMENT, 85_000, "Чернівці", "вул. Героїв Майдану, 12", 54, rooms = 2),
         Listing(2, ListingCategory.HOUSE, 142_000, "Львів", "вул. Зелена, 88", 128, rooms = 4),
     )
+
+    override fun getById(id: Long) = getAll().firstOrNull { it.id == id }
 }
 
 class GetListingsUseCaseTests {
@@ -84,5 +87,15 @@ class GetListingsUseCaseTests {
     @Test
     fun pricePerSquareMeter() {
         assertEquals(1574, getListings().first().pricePerSqm)
+    }
+}
+
+class GetListingByIdUseCaseTests {
+    private val getById = GetListingByIdUseCase(FakeListingsRepository())
+
+    @Test
+    fun returnsListingOrNull() {
+        assertEquals("Львів", getById(2)?.city)
+        assertNull(getById(99))
     }
 }

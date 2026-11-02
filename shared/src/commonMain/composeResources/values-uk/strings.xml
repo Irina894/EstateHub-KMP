@@ -77,4 +77,23 @@
     <string name="settings_account">Обліковий запис</string>
     <string name="settings_guest">Гість</string>
     <string name="settings_sign_out">Вийти</string>
+
+    <!-- Details -->
+    <string name="details_back">Назад</string>
+    <string name="details_not_found">Оголошення не знайдено</string>
+    <string name="details_rooms">Кімнати</string>
+    <string name="details_area">Площа</string>
+    <string name="details_floor">Поверх</string>
+    <string name="details_floors">Поверхів</string>
+    <string name="details_land">Ділянка</string>
+    <string name="details_floor_of">%1$d з %2$d</string>
+    <string name="details_description">Опис</string>
+    <string name="details_features">Характеристики</string>
+    <string name="details_building_type">Тип будинку</string>
+    <string name="details_heating">Опалення</string>
+    <string name="details_condition">Стан</string>
+    <string name="details_year">Рік побудови</string>
+    <string name="details_realtor">Рієлтор</string>
+    <string name="details_write">Написати</string>
+    <string name="details_call">Зателефонувати</string>
 </resources>

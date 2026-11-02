@@ -1,14 +1,28 @@
 package ua.edu.chnu.estatehub.ui.home
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ua.edu.chnu.estatehub.core.mvi.MviViewModel
 import ua.edu.chnu.estatehub.domain.usecase.GetListingsUseCase
+import ua.edu.chnu.estatehub.domain.usecase.ObserveFavoritesUseCase
+import ua.edu.chnu.estatehub.domain.usecase.ToggleFavoriteUseCase
 
 class HomeViewModel(
     private val getListings: GetListingsUseCase,
+    observeFavorites: ObserveFavoritesUseCase,
+    private val toggleFavorite: ToggleFavoriteUseCase,
 ) : MviViewModel<HomeState, HomeIntent, Nothing>(HomeState()) {
 
     init {
         refresh()
+        // Обрані зберігаються в settings і спільні з екраном деталей
+        observeFavorites()
+            .onEach { ids ->
+                reduce { copy(favoriteIds = ids) }
+                refresh()
+            }
+            .launchIn(viewModelScope)
     }
 
     override fun handleIntent(intent: HomeIntent) {
@@ -22,11 +36,7 @@ class HomeViewModel(
                 reduce { copy(category = intent.category) }
                 refresh()
             }
-            is HomeIntent.ToggleFavorite -> {
-                val ids = currentState.favoriteIds
-                reduce { copy(favoriteIds = if (intent.id in ids) ids - intent.id else ids + intent.id) }
-                refresh()
-            }
+            is HomeIntent.ToggleFavorite -> toggleFavorite(intent.id)
         }
     }
 

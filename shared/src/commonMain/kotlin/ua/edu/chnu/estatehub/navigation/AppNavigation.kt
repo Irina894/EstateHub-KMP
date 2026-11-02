@@ -7,18 +7,22 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import org.koin.compose.viewmodel.koinViewModel
 import ua.edu.chnu.estatehub.ui.auth.AuthRoute
+import ua.edu.chnu.estatehub.ui.details.DetailsRoute
 import ua.edu.chnu.estatehub.ui.home.HomeRoute
 import ua.edu.chnu.estatehub.ui.onboarding.OnboardingRoute
 
 /**
  * Navigation 3: стек екранів (backStack) є звичайним списком у стані MainViewModel,
  * NavDisplay лише малює верхній елемент.
+ *  - onNavigate: замінити весь стек (онбординг -> вхід -> головний);
+ *  - onPush: відкрити екран поверх поточного (деталі), "Назад" повертає на попередній.
  */
 @Composable
 fun AppNavigation(
     backStack: List<Route>,
     onBack: () -> Unit,
     onNavigate: (Route) -> Unit,
+    onPush: (Route) -> Unit,
 ) {
     NavDisplay(
         backStack = backStack,
@@ -40,6 +44,14 @@ fun AppNavigation(
                     homeViewModel = koinViewModel(),
                     settingsViewModel = koinViewModel(),
                     onNavigate = onNavigate,
+                    onOpenDetails = { id -> onPush(Route.Details(id)) },
+                )
+            }
+            entry<Route.Details> { key ->
+                DetailsRoute(
+                    listingId = key.listingId,
+                    viewModel = koinViewModel(),
+                    onBack = onBack,
                 )
             }
         },

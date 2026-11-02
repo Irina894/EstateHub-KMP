@@ -47,6 +47,7 @@ private fun AppRoot(viewModel: MainViewModel = koinViewModel()) {
                     backStack = state.backStack,
                     onBack = { viewModel.onIntent(MainIntent.Back) },
                     onNavigate = { viewModel.onIntent(MainIntent.ReplaceAll(it)) },
+                    onPush = { viewModel.onIntent(MainIntent.Push(it)) },
                 )
             }
         }
