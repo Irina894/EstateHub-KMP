@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">EstateHub</string>
+    <string name="dialog_ok">OK</string>
 
+    <!-- Onboarding -->
     <string name="onboarding_skip">Пропустити</string>
     <string name="onboarding_next">Далі</string>
     <string name="onboarding_get_started">Почати</string>
@@ -17,8 +19,62 @@
     <string name="onboarding_title_4">Спілкуйтесь і укладайте угоду</string>
     <string name="onboarding_desc_4">Пишіть власникам і рієлторам, робіть пропозицію та підписуйте договір, не виходячи з додатка.</string>
 
-    <string name="home_title">Ласкаво просимо до EstateHub</string>
-    <string name="home_subtitle">Оголошення з API EstateHub з’являться тут у наступних лабораторних.</string>
-    <string name="home_dark_theme">Темна тема</string>
-    <string name="home_show_onboarding">Показати вступ ще раз</string>
+    <!-- Auth -->
+    <string name="auth_title">З поверненням</string>
+    <string name="auth_subtitle">Увійдіть, щоб побачити збережені оселі та заявки.</string>
+    <string name="auth_username">Ім’я користувача</string>
+    <string name="auth_password">Пароль</string>
+    <string name="auth_toggle_password">Показати або приховати пароль</string>
+    <string name="auth_sign_in">Увійти</string>
+    <string name="auth_demo_hint">Демо-режим: підійдуть будь-які ім’я та пароль у правильному форматі, доки не підключено вхід через сервер.</string>
+
+    <string name="error_username_empty">Введіть ім’я користувача</string>
+    <string name="error_username_short">Щонайменше 3 символи</string>
+    <string name="error_username_long">Не більше 32 символів</string>
+    <string name="error_username_chars">Лише літери, цифри та . _ -</string>
+    <string name="error_password_empty">Введіть пароль</string>
+    <string name="error_password_short">Щонайменше 8 символів</string>
+    <string name="error_password_letter">Додайте хоча б одну літеру</string>
+    <string name="error_password_digit">Додайте хоча б одну цифру</string>
+    <string name="error_invalid_credentials">Неправильне ім’я або пароль</string>
+    <string name="error_network">Немає з’єднання. Спробуйте ще раз.</string>
+
+    <!-- Home -->
+    <string name="home_title">Оголошення</string>
+    <string name="home_search_hint">Пошук за містом чи вулицею</string>
+    <string name="home_empty">Нічого не знайдено. Змініть запит або категорію.</string>
+    <string name="favorites_empty">Натисніть серце на оголошенні, щоб зберегти його тут.</string>
+
+    <string name="tab_search">Пошук</string>
+    <string name="tab_favorites">Обрані</string>
+    <string name="tab_settings">Налаштування</string>
+
+    <string name="category_all">Усі</string>
+    <string name="category_apartments">Квартири</string>
+    <string name="category_houses">Будинки</string>
+    <string name="category_land">Ділянки</string>
+
+    <string name="listing_rooms">%1$d кімн.</string>
+    <string name="listing_area">%1$d м²</string>
+    <string name="listing_floor">%1$d поверх</string>
+    <string name="listing_floors">%1$d поверхи</string>
+    <string name="listing_land">%1$d соток</string>
+    <string name="listing_per_sqm">%1$s / м²</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Налаштування</string>
+    <string name="settings_language">Мова</string>
+    <string name="language_uk">Українська</string>
+    <string name="language_en">English</string>
+    <string name="settings_theme">Тема</string>
+    <string name="theme_light">Світла</string>
+    <string name="theme_dark">Темна</string>
+    <string name="theme_system">Системна</string>
+    <string name="settings_notifications">Нові оголошення</string>
+    <string name="settings_show_onboarding">Показати вступ ще раз</string>
+    <string name="settings_about">Про застосунок</string>
+    <string name="settings_about_text">EstateHub — клієнт для нерухомості на Kotlin Multiplatform і Compose Multiplatform.</string>
+    <string name="settings_account">Обліковий запис</string>
+    <string name="settings_guest">Гість</string>
+    <string name="settings_sign_out">Вийти</string>
 </resources>

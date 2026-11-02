@@ -14,6 +14,10 @@ import ua.edu.chnu.estatehub.resources.onest_medium
 import ua.edu.chnu.estatehub.resources.onest_regular
 import ua.edu.chnu.estatehub.resources.onest_semibold
 
+/**
+ * Шрифт Onest (SIL OFL): сучасний гротеск, розроблений з підтримкою кирилиці.
+ * Файли лежать у composeResources/font/ (статичні накреслення Regular/Medium/SemiBold/Bold).
+ */
 @Composable
 fun rememberEstateHubTypography(): Typography {
     val fontFamily = FontFamily(

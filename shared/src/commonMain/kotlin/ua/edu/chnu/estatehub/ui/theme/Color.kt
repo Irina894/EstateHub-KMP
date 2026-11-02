@@ -9,7 +9,6 @@ import androidx.compose.ui.graphics.Color
 // Палітра зі Stitch (дизайн-система "Domivka Architectural Realty"):
 // primary #2F5D50 (глибокий зелений), secondary #B5523B (теракота),
 // tertiary #E6E2DA (теплий нейтральний), neutral #1C1B19. Світла й темна теми.
-// Колір тексту у світлій темі пом'якшено (зеленувато-сірий замість майже чорного).
 // ---------------------------------------------------------------------------
 
 // Light
@@ -42,7 +41,7 @@ private val DarkOnSecondaryContainer = Color(0xFFFFDBD1)
 private val DarkBackground = Color(0xFF141412)
 private val DarkOnBackground = Color(0xFFE9E5DD)
 private val DarkSurface = Color(0xFF141412)
-private val DarkOnSurface = Color(0xFFE9E5DD)
+private val DarkOnSurface = Color(0xFFE6E2DA)
 private val DarkSurfaceVariant = Color(0xFF20201D)
 private val DarkOnSurfaceVariant = Color(0xFFC9C5BC)
 private val DarkOutline = Color(0xFF93908A)

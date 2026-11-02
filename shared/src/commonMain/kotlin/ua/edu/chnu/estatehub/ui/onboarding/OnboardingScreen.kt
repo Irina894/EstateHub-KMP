@@ -28,8 +28,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,31 +39,48 @@ import androidx.compose.ui.graphics.lerp as lerpColor
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import co.touchlab.kermit.Logger
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import ua.edu.chnu.estatehub.core.mvi.CollectEffects
+import ua.edu.chnu.estatehub.navigation.Route
 import ua.edu.chnu.estatehub.resources.Res
 import ua.edu.chnu.estatehub.resources.onboarding_get_started
 import ua.edu.chnu.estatehub.resources.onboarding_next
 import ua.edu.chnu.estatehub.resources.onboarding_skip
 import kotlin.math.absoluteValue
 
+/** Обгортка MVI: підписується на стан і ефекти ViewModel. */
+@Composable
+fun OnboardingRoute(
+    viewModel: OnboardingViewModel,
+    onNavigate: (Route) -> Unit,
+) {
+    val state by viewModel.state.collectAsState()
+    CollectEffects(viewModel.effects) { effect ->
+        when (effect) {
+            is OnboardingEffect.Navigate -> onNavigate(effect.route)
+        }
+    }
+    OnboardingScreen(state = state, onIntent = viewModel::onIntent)
+}
+
+/** Stateless-екран: лише малює state і передає intent-и. */
 @Composable
 fun OnboardingScreen(
-    onFinished: () -> Unit,
+    state: OnboardingState,
+    onIntent: (OnboardingIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val pages = onboardingPages
-    val pagerState = rememberPagerState(pageCount = { pages.size })
-    val scope = rememberCoroutineScope()
-    val log = remember { Logger.withTag("Onboarding") }
-    val isLastPage = pagerState.currentPage == pages.lastIndex
+    val pagerState = rememberPagerState(initialPage = state.page, pageCount = { pages.size })
 
+    // State -> Pager: кнопка "Далі" змінює state.page, pager плавно прокручується
+    LaunchedEffect(state.page) {
+        if (pagerState.currentPage != state.page) pagerState.animateScrollToPage(state.page)
+    }
+    // Pager -> State: свайп користувача повідомляє ViewModel про нову сторінку
     LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }.collect { page ->
-            log.i { "Page ${page + 1} of ${pages.size}" }
-        }
+        snapshotFlow { pagerState.currentPage }.collect { onIntent(OnboardingIntent.PageChanged(it)) }
     }
 
     Surface(
@@ -84,11 +101,8 @@ fun OnboardingScreen(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (!isLastPage) {
-                    TextButton(onClick = {
-                        log.i { "Onboarding skipped on page ${pagerState.currentPage + 1}" }
-                        onFinished()
-                    }) {
+                if (!state.isLastPage) {
+                    TextButton(onClick = { onIntent(OnboardingIntent.SkipClicked) }) {
                         Text(stringResource(Res.string.onboarding_skip))
                     }
                 }
@@ -110,14 +124,7 @@ fun OnboardingScreen(
             PagerIndicator(pagerState = pagerState)
 
             Button(
-                onClick = {
-                    if (isLastPage) {
-                        log.i { "Onboarding completed" }
-                        onFinished()
-                    } else {
-                        scope.launch { pagerState.animateScrollToPage(pagerState.currentPage + 1) }
-                    }
-                },
+                onClick = { onIntent(OnboardingIntent.NextClicked) },
                 modifier = Modifier
                     .widthIn(max = 480.dp)
                     .fillMaxWidth()
@@ -126,7 +133,7 @@ fun OnboardingScreen(
             ) {
                 Text(
                     text = stringResource(
-                        if (isLastPage) Res.string.onboarding_get_started else Res.string.onboarding_next
+                        if (state.isLastPage) Res.string.onboarding_get_started else Res.string.onboarding_next
                     ),
                     style = MaterialTheme.typography.labelLarge,
                 )

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">EstateHub</string>
+    <string name="dialog_ok">OK</string>
 
+    <!-- Onboarding -->
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_get_started">Get started</string>
@@ -17,8 +19,62 @@
     <string name="onboarding_title_4">Chat and close the deal</string>
     <string name="onboarding_desc_4">Message owners and realtors, make an offer and sign the contract without leaving the app.</string>
 
-    <string name="home_title">Welcome to EstateHub</string>
-    <string name="home_subtitle">Listings from the EstateHub API will appear here in the next labs.</string>
-    <string name="home_dark_theme">Dark theme</string>
-    <string name="home_show_onboarding">Show onboarding again</string>
+    <!-- Auth -->
+    <string name="auth_title">Welcome back</string>
+    <string name="auth_subtitle">Sign in to see your saved homes and requests.</string>
+    <string name="auth_username">Username</string>
+    <string name="auth_password">Password</string>
+    <string name="auth_toggle_password">Show or hide password</string>
+    <string name="auth_sign_in">Sign in</string>
+    <string name="auth_demo_hint">Demo mode: any username and password in the correct format will work until the server login is connected.</string>
+
+    <string name="error_username_empty">Enter your username</string>
+    <string name="error_username_short">At least 3 characters</string>
+    <string name="error_username_long">No more than 32 characters</string>
+    <string name="error_username_chars">Only letters, digits and . _ - are allowed</string>
+    <string name="error_password_empty">Enter your password</string>
+    <string name="error_password_short">At least 8 characters</string>
+    <string name="error_password_letter">Add at least one letter</string>
+    <string name="error_password_digit">Add at least one digit</string>
+    <string name="error_invalid_credentials">Wrong username or password</string>
+    <string name="error_network">No connection. Please try again.</string>
+
+    <!-- Home -->
+    <string name="home_title">Listings</string>
+    <string name="home_search_hint">Search city or street</string>
+    <string name="home_empty">Nothing found. Try another search or category.</string>
+    <string name="favorites_empty">Tap the heart on a listing to save it here.</string>
+
+    <string name="tab_search">Search</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_settings">Settings</string>
+
+    <string name="category_all">All</string>
+    <string name="category_apartments">Apartments</string>
+    <string name="category_houses">Houses</string>
+    <string name="category_land">Land</string>
+
+    <string name="listing_rooms">%1$d rooms</string>
+    <string name="listing_area">%1$d m²</string>
+    <string name="listing_floor">floor %1$d</string>
+    <string name="listing_floors">%1$d floors</string>
+    <string name="listing_land">%1$d ares</string>
+    <string name="listing_per_sqm">%1$s / m²</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_language">Language</string>
+    <string name="language_uk">Українська</string>
+    <string name="language_en">English</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System</string>
+    <string name="settings_notifications">New listings alerts</string>
+    <string name="settings_show_onboarding">Show introduction again</string>
+    <string name="settings_about">About the app</string>
+    <string name="settings_about_text">EstateHub is a real estate client built with Kotlin Multiplatform and Compose Multiplatform.</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_guest">Guest</string>
+    <string name="settings_sign_out">Sign out</string>
 </resources>

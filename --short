@@ -1,0 +1,59 @@
+warning: in the working copy of 'androidApp/src/main/kotlin/ua/edu/chnu/estatehub/MainActivity.kt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'gradle/libs.versions.toml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/composeResources/drawable/ic_onboarding_chat.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/composeResources/drawable/ic_onboarding_event.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/composeResources/drawable/ic_onboarding_favorite.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/composeResources/drawable/ic_onboarding_search.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/composeResources/values-uk/strings.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/composeResources/values/strings.xml', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/kotlin/ua/edu/chnu/estatehub/App.kt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/kotlin/ua/edu/chnu/estatehub/ui/home/HomeScreen.kt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/kotlin/ua/edu/chnu/estatehub/ui/onboarding/OnboardingPage.kt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/kotlin/ua/edu/chnu/estatehub/ui/onboarding/OnboardingScreen.kt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/kotlin/ua/edu/chnu/estatehub/ui/theme/Color.kt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/kotlin/ua/edu/chnu/estatehub/ui/theme/Theme.kt', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'shared/src/commonMain/kotlin/ua/edu/chnu/estatehub/ui/theme/Type.kt', LF will be replaced by CRLF the next time Git touches it
+ androidApp/build.gradle.kts                        |  54 [31m----[m
+ androidApp/proguard-rules.pro                      |  21 [31m--[m
+ androidApp/src/main/AndroidManifest.xml            |  22 [31m--[m
+ .../kotlin/ua/edu/chnu/estatehub/MainActivity.kt   |   8 [31m-[m
+ .../res/drawable-v24/ic_launcher_foreground.xml    |  30 [31m--[m
+ .../main/res/drawable/ic_launcher_background.xml   | 170 [31m-----------[m
+ .../src/main/res/mipmap-anydpi-v26/ic_launcher.xml |   5 [31m-[m
+ .../res/mipmap-anydpi-v26/ic_launcher_round.xml    |   5 [31m-[m
+ .../src/main/res/mipmap-hdpi/ic_launcher.png       | Bin [31m3593[m -> [32m0[m bytes
+ .../src/main/res/mipmap-hdpi/ic_launcher_round.png | Bin [31m5339[m -> [32m0[m bytes
+ .../src/main/res/mipmap-mdpi/ic_launcher.png       | Bin [31m2636[m -> [32m0[m bytes
+ .../src/main/res/mipmap-mdpi/ic_launcher_round.png | Bin [31m3388[m -> [32m0[m bytes
+ .../src/main/res/mipmap-xhdpi/ic_launcher.png      | Bin [31m4926[m -> [32m0[m bytes
+ .../main/res/mipmap-xhdpi/ic_launcher_round.png    | Bin [31m7472[m -> [32m0[m bytes
+ .../src/main/res/mipmap-xxhdpi/ic_launcher.png     | Bin [31m7909[m -> [32m0[m bytes
+ .../main/res/mipmap-xxhdpi/ic_launcher_round.png   | Bin [31m11873[m -> [32m0[m bytes
+ .../src/main/res/mipmap-xxxhdpi/ic_launcher.png    | Bin [31m10652[m -> [32m0[m bytes
+ .../main/res/mipmap-xxxhdpi/ic_launcher_round.png  | Bin [31m16570[m -> [32m0[m bytes
+ androidApp/src/main/res/values/strings.xml         |   3 [31m-[m
+ gradle/libs.versions.toml                          |  16 [32m+[m
+ shared/build.gradle.kts                            |  63 [31m----[m
+ .../chnu/estatehub/SharedLogicAndroidHostTest.kt   |  12 [31m-[m
+ .../ua/edu/chnu/estatehub/Platform.android.kt      |   9 [31m-[m
+ .../drawable/compose-multiplatform.xml             |  44 [31m---[m
+ .../drawable/ic_onboarding_chat.xml                |   3 [32m+[m[31m-[m
+ .../drawable/ic_onboarding_event.xml               |   3 [32m+[m[31m-[m
+ .../drawable/ic_onboarding_favorite.xml            |   3 [32m+[m[31m-[m
+ .../drawable/ic_onboarding_search.xml              |   3 [32m+[m[31m-[m
+ .../composeResources/values-uk/strings.xml         |  66 [32m+++[m[31m-[m
+ .../commonMain/composeResources/values/strings.xml |  66 [32m+++[m[31m-[m
+ .../commonMain/kotlin/ua/edu/chnu/estatehub/App.kt |  72 [32m+++[m[31m--[m
+ .../kotlin/ua/edu/chnu/estatehub/Greeting.kt       |   9 [31m-[m
+ .../kotlin/ua/edu/chnu/estatehub/GreetingUtil.kt   |   4 [31m-[m
+ .../kotlin/ua/edu/chnu/estatehub/Platform.kt       |   7 [31m-[m
+ .../ua/edu/chnu/estatehub/data/AppPreferences.kt   |  28 [31m--[m
+ .../ua/edu/chnu/estatehub/ui/home/HomeScreen.kt    | 335 [32m+++++++++++++++++[m[31m----[m
+ .../estatehub/ui/onboarding/OnboardingScreen.kt    |  59 [32m++[m[31m--[m
+ .../kotlin/ua/edu/chnu/estatehub/ui/theme/Color.kt |   5 [32m+[m[31m-[m
+ .../kotlin/ua/edu/chnu/estatehub/ui/theme/Theme.kt |   2 [32m+[m[31m-[m
+ .../kotlin/ua/edu/chnu/estatehub/ui/theme/Type.kt  |   6 [32m+[m[31m-[m
+ .../ua/edu/chnu/estatehub/SharedCommonTest.kt      |  12 [31m-[m
+ .../kotlin/ua/edu/chnu/estatehub/Platform.jvm.kt   |   7 [31m-[m
+ .../edu/chnu/estatehub/SharedLogicDesktopTest.kt   |  12 [31m-[m
+ 43 files changed, 504 insertions(+), 660 deletions(-)
