@@ -2,16 +2,13 @@ package ua.edu.chnu.estatehub.data
 
 import co.touchlab.kermit.Logger
 import com.russhwolf.settings.Settings
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import ua.edu.chnu.estatehub.domain.model.AppSettings
-import ua.edu.chnu.estatehub.domain.model.AuthResult
 import ua.edu.chnu.estatehub.domain.model.ThemeMode
 import ua.edu.chnu.estatehub.domain.repository.AppSettingsRepository
-import ua.edu.chnu.estatehub.domain.repository.AuthRepository
 import ua.edu.chnu.estatehub.domain.repository.OnboardingRepository
 import ua.edu.chnu.estatehub.locale.AppLanguage
 import ua.edu.chnu.estatehub.locale.systemLanguageCode
@@ -30,6 +27,7 @@ class OnboardingRepositoryImpl(private val settings: Settings) : OnboardingRepos
     }
 }
 
+<<<<<<< HEAD
 class LocalAuthRepository(private val settings: Settings) : AuthRepository {
     private val log = Logger.withTag("AuthRepository")
 
@@ -55,6 +53,8 @@ class LocalAuthRepository(private val settings: Settings) : AuthRepository {
     }
 }
 
+=======
+>>>>>>> Lab 6: ktor networking, KSafe token storage, auto refresh, MVI auth with snackbar, auth-aware navigation
 class AppSettingsRepositoryImpl(private val store: Settings) : AppSettingsRepository {
     private val log = Logger.withTag("AppSettings")
 

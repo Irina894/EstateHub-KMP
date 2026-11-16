@@ -5,6 +5,7 @@ import ua.edu.chnu.estatehub.domain.model.AppSettings
 import ua.edu.chnu.estatehub.domain.model.AuthResult
 import ua.edu.chnu.estatehub.domain.model.Listing
 import ua.edu.chnu.estatehub.domain.model.ThemeMode
+import ua.edu.chnu.estatehub.domain.model.UserProfile
 import ua.edu.chnu.estatehub.locale.AppLanguage
 
 /** Результат проходження onboarding (зберігається через multiplatform-settings). */
@@ -14,8 +15,11 @@ interface OnboardingRepository {
 }
 
 interface AuthRepository {
+    /** Ознака авторизованого користувача: true, поки в захищеному сховищі є токени. */
+    val isAuthorized: StateFlow<Boolean>
     suspend fun signIn(username: String, password: String): AuthResult
-    fun isSignedIn(): Boolean
+    /** Захищений запит: токен додається й оновлюється автоматично. null - не вдалося. */
+    suspend fun loadProfile(): UserProfile?
     fun currentUser(): String?
     fun signOut()
 }

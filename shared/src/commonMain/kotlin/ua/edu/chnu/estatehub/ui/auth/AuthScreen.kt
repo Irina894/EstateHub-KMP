@@ -29,6 +29,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,6 +39,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,12 +72,21 @@ fun AuthRoute(
     onNavigate: (Route) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    // Тексти беремо тут, у Composable-контексті: ефект лише каже, яка саме помилка сталася
+    val failureMessages = AuthFailure.entries.associateWith { it.message() }
+
     CollectEffects(viewModel.effects) { effect ->
         when (effect) {
             AuthEffect.NavigateToHome -> onNavigate(Route.Home)
+            is AuthEffect.ShowError -> scope.launch {
+                snackbarHostState.currentSnackbarData?.dismiss()
+                snackbarHostState.showSnackbar(failureMessages.getValue(effect.failure))
+            }
         }
     }
-    AuthScreen(state = state, onIntent = viewModel::onIntent)
+    AuthScreen(state = state, onIntent = viewModel::onIntent, snackbarHostState = snackbarHostState)
 }
 
 @Composable
@@ -81,6 +94,7 @@ fun AuthScreen(
     state: AuthState,
     onIntent: (AuthIntent) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
@@ -98,7 +112,8 @@ fun AuthScreen(
         onIntent(AuthIntent.SignInClicked)
     }
 
-    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Box(modifier = modifier.fillMaxSize()) {
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -186,14 +201,6 @@ fun AuthScreen(
                     keyboardActions = KeyboardActions(onDone = { submit() }),
                 )
 
-                state.failure?.let { failure ->
-                    Text(
-                        text = failure.message(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error,
-                    )
-                }
-
                 Button(
                     onClick = { submit() },
                     enabled = !state.isLoading,
@@ -221,6 +228,11 @@ fun AuthScreen(
                 )
             }
         }
+    }
+    SnackbarHost(
+        hostState = snackbarHostState,
+        modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().imePadding().padding(16.dp),
+    )
     }
 }
 
@@ -351,5 +363,6 @@ private fun AuthFailure.message(): String = stringResource(
     when (this) {
         AuthFailure.InvalidCredentials -> Res.string.error_invalid_credentials
         AuthFailure.Network -> Res.string.error_network
+        AuthFailure.Server -> Res.string.error_server
     }
 )

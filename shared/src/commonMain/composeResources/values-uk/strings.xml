@@ -26,7 +26,7 @@
     <string name="auth_password">Пароль</string>
     <string name="auth_toggle_password">Показати або приховати пароль</string>
     <string name="auth_sign_in">Увійти</string>
-    <string name="auth_demo_hint">Демо-режим: підійдуть будь-які ім’я та пароль у правильному форматі, доки не підключено вхід через сервер.</string>
+    <string name="auth_demo_hint">Тестовий сервер dummyjson.com. Спробуйте логін emilys, пароль emilyspass.</string>
 
     <string name="error_username_empty">Введіть ім’я користувача</string>
     <string name="error_username_short">Щонайменше 3 символи</string>
@@ -38,6 +38,7 @@
     <string name="error_password_digit">Додайте хоча б одну цифру</string>
     <string name="error_invalid_credentials">Неправильне ім’я або пароль</string>
     <string name="error_network">Немає з’єднання. Спробуйте ще раз.</string>
+    <string name="error_server">Помилка сервера. Спробуйте пізніше.</string>
 
     <!-- Home -->
     <string name="home_title">Оголошення</string>

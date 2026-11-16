@@ -8,12 +8,12 @@ import ua.edu.chnu.estatehub.core.mvi.MviViewModel
 import ua.edu.chnu.estatehub.domain.model.AuthFailure
 import ua.edu.chnu.estatehub.domain.model.AuthResult
 import ua.edu.chnu.estatehub.domain.usecase.SignInUseCase
-import ua.edu.chnu.estatehub.domain.usecase.ValidatePasswordUseCase
+import ua.edu.chnu.estatehub.domain.usecase.ValidateLoginPasswordUseCase
 import ua.edu.chnu.estatehub.domain.usecase.ValidateUsernameUseCase
 
 class AuthViewModel(
     private val validateUsername: ValidateUsernameUseCase,
-    private val validatePassword: ValidatePasswordUseCase,
+    private val validatePassword: ValidateLoginPasswordUseCase,
     private val signIn: SignInUseCase,
 ) : MviViewModel<AuthState, AuthIntent, AuthEffect>(AuthState()) {
 
@@ -25,14 +25,12 @@ class AuthViewModel(
                 copy(
                     username = intent.value,
                     usernameError = if (submitted || usernameError != null) validateUsername(intent.value) else null,
-                    failure = null,
                 )
             }
             is AuthIntent.PasswordChanged -> reduce {
                 copy(
                     password = intent.value,
                     passwordError = if (submitted || passwordError != null) validatePassword(intent.value) else null,
-                    failure = null,
                 )
             }
             AuthIntent.UsernameSubmitted -> reduce { copy(usernameError = validateUsername(username)) }
@@ -55,7 +53,7 @@ class AuthViewModel(
             return
         }
 
-        reduce { copy(submitted = true, isLoading = true, failure = null) }
+        reduce { copy(submitted = true, isLoading = true) }
         viewModelScope.launch {
             try {
                 when (val result = signIn(s.username, s.password)) {
@@ -63,13 +61,17 @@ class AuthViewModel(
                         reduce { copy(isLoading = false) }
                         emitEffect(AuthEffect.NavigateToHome)
                     }
-                    is AuthResult.Failure -> reduce { copy(isLoading = false, failure = result.reason) }
+                    is AuthResult.Failure -> {
+                        reduce { copy(isLoading = false) }
+                        emitEffect(AuthEffect.ShowError(result.reason))
+                    }
                 }
             } catch (e: CancellationException) {
                 throw e // скасування корутини не є помилкою входу
             } catch (e: Exception) {
                 log.e(e) { "Sign in failed" }
-                reduce { copy(isLoading = false, failure = AuthFailure.Network) }
+                reduce { copy(isLoading = false) }
+                emitEffect(AuthEffect.ShowError(AuthFailure.Network))
             }
         }
     }

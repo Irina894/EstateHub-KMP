@@ -14,7 +14,12 @@ enum class UsernameError { Empty, TooShort, TooLong, InvalidChars }
 
 enum class PasswordError { Empty, TooShort, NoLetter, NoDigit }
 
-enum class AuthFailure { InvalidCredentials, Network }
+enum class AuthFailure { InvalidCredentials, Network, Server }
+
+/** Пара токенів, отримана від сервера. */
+data class AuthTokens(val accessToken: String, val refreshToken: String)
+
+data class UserProfile(val id: Long, val username: String, val fullName: String, val email: String)
 
 sealed interface AuthResult {
     data class Success(val username: String) : AuthResult

@@ -8,7 +8,10 @@ import ua.edu.chnu.estatehub.core.mvi.MviViewModel
 import ua.edu.chnu.estatehub.domain.model.AppSettings
 import ua.edu.chnu.estatehub.domain.usecase.IsOnboardingCompletedUseCase
 import ua.edu.chnu.estatehub.domain.usecase.IsSignedInUseCase
+import ua.edu.chnu.estatehub.domain.usecase.LoadProfileUseCase
 import ua.edu.chnu.estatehub.domain.usecase.ObserveAppSettingsUseCase
+import ua.edu.chnu.estatehub.domain.usecase.ObserveAuthorizedUseCase
+import kotlinx.coroutines.launch
 import ua.edu.chnu.estatehub.navigation.Route
 
 data class MainState(
@@ -32,6 +35,8 @@ class MainViewModel(
     observeSettings: ObserveAppSettingsUseCase,
     isOnboardingCompleted: IsOnboardingCompletedUseCase,
     isSignedIn: IsSignedInUseCase,
+    observeAuthorized: ObserveAuthorizedUseCase,
+    loadProfile: LoadProfileUseCase,
 ) : MviViewModel<MainState, MainIntent, Nothing>(
     MainState(settings = observeSettings().value),
 ) {
@@ -49,6 +54,20 @@ class MainViewModel(
         observeSettings()
             .onEach { settings -> reduce { copy(settings = settings) } }
             .launchIn(viewModelScope)
+
+        // Ознака авторизації: якщо вона зникла (вихід, недійсний refresh-токен), закритих екранів не лишається
+        observeAuthorized()
+            .onEach { authorized ->
+                val onProtectedScreen = currentState.backStack.any { it is Route.Home || it is Route.Details }
+                if (!authorized && onProtectedScreen) {
+                    log.i { "Not authorized anymore -> Auth" }
+                    reduce { copy(backStack = listOf(Route.Auth)) }
+                }
+            }
+            .launchIn(viewModelScope)
+
+        // Перевіряємо сесію одразу: при простроченому access-токені спрацює автооновлення
+        if (isSignedIn()) viewModelScope.launch { loadProfile() }
     }
 
     override fun handleIntent(intent: MainIntent) {

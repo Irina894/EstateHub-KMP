@@ -59,3 +59,12 @@ ui (Compose)  ->  ViewModel (MVI: State / Intent / Effect)  ->  use case  ->  re
 - Desktop: `./gradlew :desktopApp:run`
 - Android: запуск конфігурації `androidApp`
 - Тести: `./gradlew :shared:jvmTest`
+
+## Lab 6 — Network, secure storage, authorization
+
+- **ktor client**: `data/remote` (`HttpClientFactory`, `AuthApi`, `ProfileApi`, DTOs). Backend: open test API https://dummyjson.com (`/auth/login`, `/auth/refresh`, `/auth/me`); test user `emilys` / `emilyspass`.
+- **KSafe**: `data/local/TokenStorage.kt` — access/refresh tokens are encrypted (Android Keystore / desktop OS store).
+- **Auto refresh**: `HttpSend` interceptor adds `Authorization: Bearer`, on `401` calls `TokenRefresher` (guarded by a `Mutex`, single refresh for parallel requests) and repeats the request. Rejected refresh token → session cleared → user returns to the Auth screen. Access token lifetime is 2 min (`ApiConfig.ACCESS_TOKEN_TTL_MINUTES`) so refresh is easy to demonstrate.
+- **Domain**: `AuthRepository`, use cases `SignIn`, `LoadProfile`, `ObserveAuthorized`, `IsSignedIn`, `SignOut`, `ValidateLoginPassword`.
+- **MVI (Auth)**: `AuthState` / `AuthIntent` / `AuthEffect` (`NavigateToHome`, `ShowError`) → transient Snackbar.
+- **Navigation**: start destination and `MainViewModel` use the `isAuthorized` flag (tokens present); losing it returns to Auth.

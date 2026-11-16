@@ -26,7 +26,7 @@
     <string name="auth_password">Password</string>
     <string name="auth_toggle_password">Show or hide password</string>
     <string name="auth_sign_in">Sign in</string>
-    <string name="auth_demo_hint">Demo mode: any username and password in the correct format will work until the server login is connected.</string>
+    <string name="auth_demo_hint">Test server dummyjson.com. Try username emilys, password emilyspass.</string>
 
     <string name="error_username_empty">Enter your username</string>
     <string name="error_username_short">At least 3 characters</string>
@@ -38,6 +38,7 @@
     <string name="error_password_digit">Add at least one digit</string>
     <string name="error_invalid_credentials">Wrong username or password</string>
     <string name="error_network">No connection. Please try again.</string>
+    <string name="error_server">Server error. Please try again later.</string>
 
     <!-- Home -->
     <string name="home_title">Listings</string>

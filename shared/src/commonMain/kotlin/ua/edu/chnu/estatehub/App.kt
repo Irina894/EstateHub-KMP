@@ -10,6 +10,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.koin.compose.KoinApplication
+import org.koin.dsl.module
+import ua.edu.chnu.estatehub.data.local.rememberKSafe
 import org.koin.compose.viewmodel.koinViewModel
 import ua.edu.chnu.estatehub.di.appModule
 import ua.edu.chnu.estatehub.domain.model.ThemeMode
@@ -22,7 +24,8 @@ import ua.edu.chnu.estatehub.ui.theme.EstateHubTheme
 // Без @Preview: Koin і Settings() потребують реального середовища.
 @Composable
 fun App() {
-    KoinApplication(application = { modules(appModule) }) {
+    val ksafe = rememberKSafe()
+    KoinApplication(application = { modules(appModule, module { single { ksafe } }) }) {
         AppRoot()
     }
 }
