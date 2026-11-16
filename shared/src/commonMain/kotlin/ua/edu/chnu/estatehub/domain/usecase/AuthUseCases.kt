@@ -5,7 +5,6 @@ import ua.edu.chnu.estatehub.domain.model.PasswordError
 import ua.edu.chnu.estatehub.domain.model.UsernameError
 import ua.edu.chnu.estatehub.domain.repository.AuthRepository
 
-/** Ім'я користувача: 3..32 символи, літери/цифри та . _ - */
 class ValidateUsernameUseCase {
     operator fun invoke(value: String): UsernameError? {
         val name = value.trim()
@@ -25,7 +24,6 @@ class ValidateUsernameUseCase {
     }
 }
 
-/** Пароль: щонайменше 8 символів, хоча б одна літера й одна цифра. */
 class ValidatePasswordUseCase {
     operator fun invoke(value: String): PasswordError? = when {
         value.isEmpty() -> PasswordError.Empty

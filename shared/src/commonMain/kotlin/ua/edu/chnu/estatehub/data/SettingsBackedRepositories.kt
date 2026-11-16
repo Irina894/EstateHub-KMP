@@ -15,11 +15,6 @@ import ua.edu.chnu.estatehub.domain.repository.AuthRepository
 import ua.edu.chnu.estatehub.domain.repository.OnboardingRepository
 import ua.edu.chnu.estatehub.locale.AppLanguage
 import ua.edu.chnu.estatehub.locale.systemLanguageCode
-
-/**
- * Репозиторії поверх multiplatform-settings:
- *  Android -> SharedPreferences, iOS -> NSUserDefaults, Desktop -> java.util.prefs.
- */
 class OnboardingRepositoryImpl(private val settings: Settings) : OnboardingRepository {
     private val log = Logger.withTag("OnboardingRepository")
 
@@ -35,11 +30,6 @@ class OnboardingRepositoryImpl(private val settings: Settings) : OnboardingRepos
     }
 }
 
-/**
- * Локальна (демо) авторизація: приймає будь-які коректні за форматом облікові дані й запам'ятовує
- * користувача. Інтерфейс AuthRepository залишається тим самим, коли тут з'явиться виклик
- * API (POST /api/auth/login) з backend-частини EstateHub.
- */
 class LocalAuthRepository(private val settings: Settings) : AuthRepository {
     private val log = Logger.withTag("AuthRepository")
 

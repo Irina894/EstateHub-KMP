@@ -42,7 +42,9 @@
     <!-- Home -->
     <string name="home_title">Оголошення</string>
     <string name="home_search_hint">Пошук за містом чи вулицею</string>
-    <string name="home_empty">Нічого не знайдено. Змініть запит або категорію.</string>
+    <string name="home_empty_title">Нічого не знайдено</string>
+    <string name="home_empty">Змініть запит або категорію.</string>
+    <string name="favorites_empty_title">Поки немає обраних</string>
     <string name="favorites_empty">Натисніть серце на оголошенні, щоб зберегти його тут.</string>
 
     <string name="tab_search">Пошук</string>
@@ -53,6 +55,7 @@
     <string name="category_apartments">Квартири</string>
     <string name="category_houses">Будинки</string>
     <string name="category_land">Ділянки</string>
+    <string name="category_offices">Офіси</string>
 
     <string name="listing_rooms">%1$d кімн.</string>
     <string name="listing_area">%1$d м²</string>
@@ -95,5 +98,5 @@
     <string name="details_year">Рік побудови</string>
     <string name="details_realtor">Рієлтор</string>
     <string name="details_write">Написати</string>
-    <string name="details_call">Зателефонувати</string>
+    <string name="details_call">Подзвонити</string>
 </resources>

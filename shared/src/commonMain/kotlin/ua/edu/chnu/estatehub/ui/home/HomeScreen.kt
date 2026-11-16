@@ -1,6 +1,5 @@
 package ua.edu.chnu.estatehub.ui.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,10 +22,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -38,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -47,6 +45,8 @@ import ua.edu.chnu.estatehub.domain.model.Listing
 import ua.edu.chnu.estatehub.domain.model.ListingCategory
 import ua.edu.chnu.estatehub.navigation.Route
 import ua.edu.chnu.estatehub.resources.*
+import ua.edu.chnu.estatehub.ui.common.EmptyState
+import ua.edu.chnu.estatehub.ui.common.OverlayIconButton
 import ua.edu.chnu.estatehub.ui.settings.SettingsRoute
 import ua.edu.chnu.estatehub.ui.settings.SettingsViewModel
 
@@ -109,6 +109,13 @@ private fun androidx.compose.foundation.layout.RowScope.TabItem(
     NavigationBarItem(
         selected = selected,
         onClick = onClick,
+        colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = MaterialTheme.colorScheme.secondary,
+            selectedTextColor = MaterialTheme.colorScheme.secondary,
+            indicatorColor = MaterialTheme.colorScheme.secondaryContainer,
+            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
         icon = {
             Icon(
                 painter = painterResource(if (selected) selectedIcon else icon),
@@ -152,7 +159,11 @@ private fun SearchTab(state: HomeState, onIntent: (HomeIntent) -> Unit, onOpen: 
 
         if (state.listings.isEmpty()) {
             item {
-                EmptyHint(stringResource(Res.string.home_empty))
+                EmptyState(
+                    icon = Res.drawable.ic_search,
+                    title = stringResource(Res.string.home_empty_title),
+                    text = stringResource(Res.string.home_empty),
+                )
             }
         }
 
@@ -182,7 +193,13 @@ private fun FavoritesTab(state: HomeState, onIntent: (HomeIntent) -> Unit, onOpe
             )
         }
         if (state.favorites.isEmpty()) {
-            item { EmptyHint(stringResource(Res.string.favorites_empty)) }
+            item {
+                EmptyState(
+                    icon = Res.drawable.ic_favorite_border,
+                    title = stringResource(Res.string.favorites_empty_title),
+                    text = stringResource(Res.string.favorites_empty),
+                )
+            }
         }
         items(state.favorites, key = { it.id }) { listing ->
             ListingCard(
@@ -196,23 +213,13 @@ private fun FavoritesTab(state: HomeState, onIntent: (HomeIntent) -> Unit, onOpe
 }
 
 @Composable
-private fun EmptyHint(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth().padding(vertical = 48.dp),
-    )
-}
-
-@Composable
 private fun CategoryChips(selected: ListingCategory?, onSelect: (ListingCategory?) -> Unit) {
     val entries = listOf<Pair<ListingCategory?, String>>(
         null to stringResource(Res.string.category_all),
         ListingCategory.APARTMENT to stringResource(Res.string.category_apartments),
         ListingCategory.HOUSE to stringResource(Res.string.category_houses),
         ListingCategory.LAND to stringResource(Res.string.category_land),
+        ListingCategory.OFFICE to stringResource(Res.string.category_offices),
     )
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         items(entries) { (category, label) ->
@@ -239,23 +246,15 @@ private fun ListingCard(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
     ) {
         Box(modifier = Modifier.fillMaxWidth().height(184.dp)) {
-            ListingArt(category = listing.category, seed = listing.id)
-            IconButton(
+            ListingImage(listing)
+            OverlayIconButton(
+                icon = if (isFavorite) Res.drawable.ic_favorite else Res.drawable.ic_favorite_border,
+                contentDescription = stringResource(Res.string.tab_favorites),
                 onClick = onToggleFavorite,
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(10.dp)
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.92f), CircleShape),
-            ) {
-                Icon(
-                    painter = painterResource(
-                        if (isFavorite) Res.drawable.ic_favorite else Res.drawable.ic_favorite_border
-                    ),
-                    contentDescription = stringResource(Res.string.tab_favorites),
-                    tint = if (isFavorite) MaterialTheme.colorScheme.secondary
-                    else MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+                modifier = Modifier.align(Alignment.TopEnd).padding(10.dp),
+                tint = if (isFavorite) MaterialTheme.colorScheme.secondary
+                else MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(
@@ -270,8 +269,8 @@ private fun ListingCard(
                 )
                 Text(
                     text = stringResource(Res.string.listing_per_sqm, "$" + formatThousands(listing.pricePerSqm)),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.78f),
                 )
             }
             Text(

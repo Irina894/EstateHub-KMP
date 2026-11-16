@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,9 +21,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,13 +35,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ua.edu.chnu.estatehub.domain.model.Listing
 import ua.edu.chnu.estatehub.domain.model.Realtor
 import ua.edu.chnu.estatehub.resources.*
-import ua.edu.chnu.estatehub.ui.home.ListingArt
+import ua.edu.chnu.estatehub.ui.common.OverlayIconButton
+import ua.edu.chnu.estatehub.ui.home.ListingGallery
 import ua.edu.chnu.estatehub.ui.home.formatThousands
 
 @Composable
@@ -60,8 +64,16 @@ fun DetailsScreen(
     onBack: () -> Unit,
 ) {
     val listing = state.listing
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        Box(modifier = Modifier.fillMaxSize()) {
+    val realtor = listing?.details?.realtor
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        bottomBar = {
+            if (realtor != null) ContactBar(realtor = realtor)
+        },
+    ) { padding ->
+        // padding.bottom = висота нижньої панелі, тож контент ніколи не опиняється під нею
+        Box(modifier = Modifier.fillMaxSize().padding(bottom = padding.calculateBottomPadding())) {
             if (listing == null) {
                 if (state.loaded) {
                     Text(
@@ -76,7 +88,7 @@ fun DetailsScreen(
                 DetailsContent(listing)
             }
 
-            // кнопки поверх зображення
+            // кнопки поверх зображення: однакові з картками списку
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -84,45 +96,22 @@ fun DetailsScreen(
                     .padding(horizontal = 12.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                RoundIconButton(
+                OverlayIconButton(
                     icon = Res.drawable.ic_arrow_back,
-                    description = stringResource(Res.string.details_back),
+                    contentDescription = stringResource(Res.string.details_back),
                     onClick = onBack,
                 )
                 if (listing != null) {
-                    RoundIconButton(
+                    OverlayIconButton(
                         icon = if (state.isFavorite) Res.drawable.ic_favorite else Res.drawable.ic_favorite_border,
-                        description = stringResource(Res.string.tab_favorites),
+                        contentDescription = stringResource(Res.string.tab_favorites),
                         tint = if (state.isFavorite) MaterialTheme.colorScheme.secondary
                         else MaterialTheme.colorScheme.onSurfaceVariant,
                         onClick = { onIntent(DetailsIntent.ToggleFavorite) },
                     )
                 }
             }
-
-            val realtor = listing?.details?.realtor
-            if (realtor != null) {
-                ContactBar(
-                    realtor = realtor,
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                )
-            }
         }
-    }
-}
-
-@Composable
-private fun RoundIconButton(
-    icon: org.jetbrains.compose.resources.DrawableResource,
-    description: String,
-    onClick: () -> Unit,
-    tint: androidx.compose.ui.graphics.Color = MaterialTheme.colorScheme.onSurface,
-) {
-    IconButton(
-        onClick = onClick,
-        modifier = Modifier.background(MaterialTheme.colorScheme.surface.copy(alpha = 0.92f), CircleShape),
-    ) {
-        Icon(painter = painterResource(icon), contentDescription = description, tint = tint)
     }
 }
 
@@ -135,7 +124,7 @@ private fun DetailsContent(listing: Listing) {
             .verticalScroll(rememberScrollState()),
     ) {
         Box(modifier = Modifier.fillMaxWidth().height(300.dp)) {
-            ListingArt(category = listing.category, seed = listing.id)
+            ListingGallery(listing)
         }
 
         Column(
@@ -237,8 +226,7 @@ private fun DetailsContent(listing: Listing) {
                 }
             }
 
-            // місце під нижню панель з кнопками
-            Spacer(Modifier.height(96.dp))
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
@@ -326,18 +314,30 @@ private fun ContactBar(realtor: Realtor, modifier: Modifier = Modifier) {
                 // на пристроях без відповідного додатка openUri може кинути виняток
                 onClick = { runCatching { uriHandler.openUri("sms:$phone") } },
                 modifier = Modifier.weight(1f).height(52.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp),
             ) {
                 Icon(painterResource(Res.drawable.ic_chat), contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.size(8.dp))
-                Text(stringResource(Res.string.details_write))
+                Text(
+                    text = stringResource(Res.string.details_write),
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
             Button(
                 onClick = { runCatching { uriHandler.openUri("tel:$phone") } },
                 modifier = Modifier.weight(1f).height(52.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp),
             ) {
                 Icon(painterResource(Res.drawable.ic_call), contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.size(8.dp))
-                Text(stringResource(Res.string.details_call))
+                Text(
+                    text = stringResource(Res.string.details_call),
+                    maxLines = 1,
+                    softWrap = false,
+                    overflow = TextOverflow.Ellipsis,
+                )
             }
         }
     }

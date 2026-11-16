@@ -70,6 +70,19 @@ class InMemoryListingsRepository : ListingsRepository {
                 realtor = Realtor("Олена Ковальчук", "+380 67 123 45 67"),
             ),
         ),
+        Listing(
+            6, ListingCategory.OFFICE, 120_000, "Київ", "вул. Хрещатик, 22", 78,
+            rooms = 3, floor = 5, totalFloors = 12,
+            details = ListingDetails(
+                description = "Світлий офіс в бізнес-центрі класу B+ у самому серці міста. Open space, дві переговорні, " +
+                    "кондиціонування, цілодобова охорона та паркомісце в ціні.",
+                buildingType = "Скло й бетон",
+                heating = "Централізоване",
+                condition = "Готовий до роботи",
+                yearBuilt = 2019,
+                realtor = Realtor("Софія Лисенко", "+380 63 555 66 77"),
+            ),
+        ),
     )
 
     override fun getAll(): List<Listing> = listings

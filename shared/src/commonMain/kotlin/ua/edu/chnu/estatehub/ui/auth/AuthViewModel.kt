@@ -36,6 +36,8 @@ class AuthViewModel(
                 )
             }
             AuthIntent.UsernameSubmitted -> reduce { copy(usernameError = validateUsername(username)) }
+            AuthIntent.UsernameFocusLost -> reduce { copy(usernameError = validateUsername(username)) }
+            AuthIntent.PasswordFocusLost -> reduce { copy(passwordError = validatePassword(password)) }
             AuthIntent.TogglePasswordVisibility -> reduce { copy(isPasswordVisible = !isPasswordVisible) }
             AuthIntent.SignInClicked -> submit()
         }

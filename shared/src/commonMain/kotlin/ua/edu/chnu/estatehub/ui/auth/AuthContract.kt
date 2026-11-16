@@ -12,17 +12,16 @@ data class AuthState(
     val isPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
     val failure: AuthFailure? = null,
-    /** Чи була спроба входу: після неї помилки оновлюються під час введення. */
     val submitted: Boolean = false,
 )
 
 sealed interface AuthIntent {
     data class UsernameChanged(val value: String) : AuthIntent
     data class PasswordChanged(val value: String) : AuthIntent
-    /** Клавіатура: Next у полі імені. Перевіряє ім'я й переходить до пароля. */
     data object UsernameSubmitted : AuthIntent
+    data object UsernameFocusLost : AuthIntent
+    data object PasswordFocusLost : AuthIntent
     data object TogglePasswordVisibility : AuthIntent
-    /** Кнопка "Увійти" або Done на клавіатурі у полі пароля. */
     data object SignInClicked : AuthIntent
 }
 

@@ -34,12 +34,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.platform.LocalFocusManager
@@ -82,6 +85,9 @@ fun AuthScreen(
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
     val passwordFocus = remember { FocusRequester() }
+    // помилка з'являється лише після того, як користувач справді побував у полі й вийшов з нього
+    var usernameWasFocused by remember { mutableStateOf(false) }
+    var passwordWasFocused by remember { mutableStateOf(false) }
     val usernameError = state.usernameError
     val passwordError = state.passwordError
 
@@ -113,7 +119,10 @@ fun AuthScreen(
                 OutlinedTextField(
                     value = state.username,
                     onValueChange = { onIntent(AuthIntent.UsernameChanged(it)) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().onFocusChanged { f ->
+                        if (f.isFocused) usernameWasFocused = true
+                        else if (usernameWasFocused) onIntent(AuthIntent.UsernameFocusLost)
+                    },
                     label = { Text(stringResource(Res.string.auth_username)) },
                     leadingIcon = {
                         Icon(painterResource(Res.drawable.ic_person), contentDescription = null)
@@ -140,7 +149,10 @@ fun AuthScreen(
                 OutlinedTextField(
                     value = state.password,
                     onValueChange = { onIntent(AuthIntent.PasswordChanged(it)) },
-                    modifier = Modifier.fillMaxWidth().focusRequester(passwordFocus),
+                    modifier = Modifier.fillMaxWidth().focusRequester(passwordFocus).onFocusChanged { f ->
+                        if (f.isFocused) passwordWasFocused = true
+                        else if (passwordWasFocused) onIntent(AuthIntent.PasswordFocusLost)
+                    },
                     label = { Text(stringResource(Res.string.auth_password)) },
                     leadingIcon = {
                         Icon(painterResource(Res.drawable.ic_lock), contentDescription = null)
@@ -212,7 +224,6 @@ fun AuthScreen(
     }
 }
 
-/** Верхня панель з "архітектурним" силуетом міста, намальованим на Canvas. */
 @Composable
 private fun AuthHero() {
     val primary = MaterialTheme.colorScheme.primary

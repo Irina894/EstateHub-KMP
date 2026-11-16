@@ -51,6 +51,24 @@ fun ListingArt(category: ListingCategory, seed: Long, modifier: Modifier = Modif
                 drawRect(color = main.copy(alpha = 0.45f), topLeft = Offset(w * 0.12f, h * 0.46f), size = Size(w * 0.16f, h * 0.54f))
                 drawRect(color = main.copy(alpha = 0.45f), topLeft = Offset(w * 0.72f, h * 0.38f), size = Size(w * 0.18f, h * 0.62f))
             }
+            ListingCategory.OFFICE -> {
+                val bx = w * 0.22f
+                val bw = w * 0.56f
+                val by = h * 0.12f
+                drawRect(color = main, topLeft = Offset(bx, by), size = Size(bw, h - by))
+                val cols = 6
+                val rows = 6
+                val cw = bw / (cols + 1)
+                val ch = (h - by) / (rows + 1)
+                for (r in 1..rows) for (c in 1..cols) {
+                    drawRect(
+                        color = light.copy(alpha = if ((r * 3 + c + seed.toInt()) % 4 == 0) 0.8f else 0.3f),
+                        topLeft = Offset(bx + cw * c - cw * 0.35f, by + ch * r - ch * 0.3f),
+                        size = Size(cw * 0.7f, ch * 0.6f),
+                    )
+                }
+                drawRect(color = accent, topLeft = Offset(bx, by - h * 0.03f), size = Size(bw, h * 0.03f))
+            }
             ListingCategory.HOUSE -> {
                 val hx = w * 0.26f
                 val hw = w * 0.48f

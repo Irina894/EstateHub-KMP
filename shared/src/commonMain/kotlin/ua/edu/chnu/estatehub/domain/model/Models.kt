@@ -21,7 +21,7 @@ sealed interface AuthResult {
     data class Failure(val reason: AuthFailure) : AuthResult
 }
 
-enum class ListingCategory { APARTMENT, HOUSE, LAND }
+enum class ListingCategory { APARTMENT, HOUSE, LAND, OFFICE }
 
 /** Рієлтор, відповідальний за оголошення. */
 data class Realtor(val name: String, val phone: String)

@@ -42,7 +42,9 @@
     <!-- Home -->
     <string name="home_title">Listings</string>
     <string name="home_search_hint">Search city or street</string>
-    <string name="home_empty">Nothing found. Try another search or category.</string>
+    <string name="home_empty_title">Nothing found</string>
+    <string name="home_empty">Try another search or category.</string>
+    <string name="favorites_empty_title">No favorites yet</string>
     <string name="favorites_empty">Tap the heart on a listing to save it here.</string>
 
     <string name="tab_search">Search</string>
@@ -53,6 +55,7 @@
     <string name="category_apartments">Apartments</string>
     <string name="category_houses">Houses</string>
     <string name="category_land">Land</string>
+    <string name="category_offices">Offices</string>
 
     <string name="listing_rooms">%1$d rooms</string>
     <string name="listing_area">%1$d m²</string>
