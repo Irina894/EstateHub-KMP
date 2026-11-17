@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -57,6 +59,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import ua.edu.chnu.estatehub.ui.adaptive.rememberAdaptiveInfo
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ua.edu.chnu.estatehub.core.mvi.CollectEffects
@@ -96,6 +99,70 @@ fun AuthScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    val adaptive = rememberAdaptiveInfo()
+
+    Box(modifier = modifier.fillMaxSize()) {
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            if (adaptive.useTwoPane) {
+                // Планшет, desktop, телефон у ландшафті: герой ліворуч, форма праворуч
+                Row(modifier = Modifier.fillMaxSize().imePadding()) {
+                    AuthHero(
+                        modifier = Modifier.weight(0.46f).fillMaxHeight(),
+                        twoPane = true,
+                    )
+                    Box(
+                        modifier = Modifier.weight(0.54f).fillMaxHeight(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .widthIn(max = 520.dp)
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState())
+                                .padding(horizontal = 32.dp, vertical = 24.dp)
+                                .navigationBarsPadding(),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            AuthForm(state = state, onIntent = onIntent)
+                        }
+                    }
+                }
+            } else {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .imePadding()
+                        .verticalScroll(rememberScrollState()),
+                ) {
+                    AuthHero(modifier = Modifier.fillMaxWidth().heightIn(min = 260.dp, max = 320.dp), twoPane = false)
+
+                    Column(
+                        modifier = Modifier
+                            .widthIn(max = 480.dp)
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally)
+                            .padding(horizontal = 24.dp, vertical = 28.dp)
+                            .navigationBarsPadding(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        AuthForm(state = state, onIntent = onIntent)
+                    }
+                }
+            }
+        }
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().imePadding().padding(16.dp),
+        )
+    }
+}
+
+/** Поля, кнопка й підказка: однакові для вузького й широкого екрана, змінюється лише контейнер. */
+@Composable
+private fun ColumnScope.AuthForm(
+    state: AuthState,
+    onIntent: (AuthIntent) -> Unit,
+) {
     val focusManager = LocalFocusManager.current
     val keyboard = LocalSoftwareKeyboardController.current
     val passwordFocus = remember { FocusRequester() }
@@ -112,149 +179,125 @@ fun AuthScreen(
         onIntent(AuthIntent.SignInClicked)
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .imePadding()
-                .verticalScroll(rememberScrollState()),
-        ) {
-            AuthHero()
+    OutlinedTextField(
+        value = state.username,
+        onValueChange = { onIntent(AuthIntent.UsernameChanged(it)) },
+        modifier = Modifier.fillMaxWidth().onFocusChanged { f ->
+            if (f.isFocused) usernameWasFocused = true
+            else if (usernameWasFocused) onIntent(AuthIntent.UsernameFocusLost)
+        },
+        label = { Text(stringResource(Res.string.auth_username)) },
+        leadingIcon = {
+            Icon(painterResource(Res.drawable.ic_person), contentDescription = null)
+        },
+        isError = state.usernameError != null,
+        supportingText = if (usernameError != null) {
+            { Text(usernameError.message()) }
+        } else null,
+        singleLine = true,
+        shape = MaterialTheme.shapes.medium,
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.None,
+            autoCorrectEnabled = false,
+            keyboardType = KeyboardType.Text,
+            imeAction = ImeAction.Next,
+        ),
+        // Next у полі імені: перевірити ім'я й перейти до пароля
+        keyboardActions = KeyboardActions(onNext = {
+            onIntent(AuthIntent.UsernameSubmitted)
+            passwordFocus.requestFocus()
+        }),
+    )
 
-            Column(
-                modifier = Modifier
-                    .widthIn(max = 480.dp)
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
-                    .padding(horizontal = 24.dp, vertical = 28.dp)
-                    .navigationBarsPadding(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                OutlinedTextField(
-                    value = state.username,
-                    onValueChange = { onIntent(AuthIntent.UsernameChanged(it)) },
-                    modifier = Modifier.fillMaxWidth().onFocusChanged { f ->
-                        if (f.isFocused) usernameWasFocused = true
-                        else if (usernameWasFocused) onIntent(AuthIntent.UsernameFocusLost)
-                    },
-                    label = { Text(stringResource(Res.string.auth_username)) },
-                    leadingIcon = {
-                        Icon(painterResource(Res.drawable.ic_person), contentDescription = null)
-                    },
-                    isError = state.usernameError != null,
-                    supportingText = if (usernameError != null) {
-                        { Text(usernameError.message()) }
-                    } else null,
-                    singleLine = true,
-                    shape = MaterialTheme.shapes.medium,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.None,
-                        autoCorrectEnabled = false,
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Next,
+    OutlinedTextField(
+        value = state.password,
+        onValueChange = { onIntent(AuthIntent.PasswordChanged(it)) },
+        modifier = Modifier.fillMaxWidth().focusRequester(passwordFocus).onFocusChanged { f ->
+            if (f.isFocused) passwordWasFocused = true
+            else if (passwordWasFocused) onIntent(AuthIntent.PasswordFocusLost)
+        },
+        label = { Text(stringResource(Res.string.auth_password)) },
+        leadingIcon = {
+            Icon(painterResource(Res.drawable.ic_lock), contentDescription = null)
+        },
+        trailingIcon = {
+            IconButton(onClick = { onIntent(AuthIntent.TogglePasswordVisibility) }) {
+                Icon(
+                    painter = painterResource(
+                        if (state.isPasswordVisible) Res.drawable.ic_visibility_off
+                        else Res.drawable.ic_visibility
                     ),
-                    // Next у полі імені: перевірити ім'я й перейти до пароля
-                    keyboardActions = KeyboardActions(onNext = {
-                        onIntent(AuthIntent.UsernameSubmitted)
-                        passwordFocus.requestFocus()
-                    }),
-                )
-
-                OutlinedTextField(
-                    value = state.password,
-                    onValueChange = { onIntent(AuthIntent.PasswordChanged(it)) },
-                    modifier = Modifier.fillMaxWidth().focusRequester(passwordFocus).onFocusChanged { f ->
-                        if (f.isFocused) passwordWasFocused = true
-                        else if (passwordWasFocused) onIntent(AuthIntent.PasswordFocusLost)
-                    },
-                    label = { Text(stringResource(Res.string.auth_password)) },
-                    leadingIcon = {
-                        Icon(painterResource(Res.drawable.ic_lock), contentDescription = null)
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { onIntent(AuthIntent.TogglePasswordVisibility) }) {
-                            Icon(
-                                painter = painterResource(
-                                    if (state.isPasswordVisible) Res.drawable.ic_visibility_off
-                                    else Res.drawable.ic_visibility
-                                ),
-                                contentDescription = stringResource(Res.string.auth_toggle_password),
-                            )
-                        }
-                    },
-                    isError = state.passwordError != null,
-                    supportingText = if (passwordError != null) {
-                        { Text(passwordError.message()) }
-                    } else null,
-                    singleLine = true,
-                    shape = MaterialTheme.shapes.medium,
-                    visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
-                    else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.None,
-                        autoCorrectEnabled = false,
-                        keyboardType = KeyboardType.Password,
-                        imeAction = ImeAction.Done,
-                    ),
-                    // Done у полі пароля: те саме, що кнопка "Увійти"
-                    keyboardActions = KeyboardActions(onDone = { submit() }),
-                )
-
-                Button(
-                    onClick = { submit() },
-                    enabled = !state.isLoading,
-                    modifier = Modifier.fillMaxWidth().height(56.dp),
-                    shape = MaterialTheme.shapes.medium,
-                ) {
-                    if (state.isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(22.dp),
-                            strokeWidth = 2.dp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                        )
-                    } else {
-                        Text(
-                            text = stringResource(Res.string.auth_sign_in),
-                            style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
-                }
-
-                Text(
-                    text = stringResource(Res.string.auth_demo_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    contentDescription = stringResource(Res.string.auth_toggle_password),
                 )
             }
+        },
+        isError = state.passwordError != null,
+        supportingText = if (passwordError != null) {
+            { Text(passwordError.message()) }
+        } else null,
+        singleLine = true,
+        shape = MaterialTheme.shapes.medium,
+        visualTransformation = if (state.isPasswordVisible) VisualTransformation.None
+        else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.None,
+            autoCorrectEnabled = false,
+            keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done,
+        ),
+        // Done у полі пароля: те саме, що кнопка "Увійти"
+        keyboardActions = KeyboardActions(onDone = { submit() }),
+    )
+
+    Button(
+        onClick = { submit() },
+        enabled = !state.isLoading,
+        modifier = Modifier.fillMaxWidth().height(56.dp),
+        shape = MaterialTheme.shapes.medium,
+    ) {
+        if (state.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(22.dp),
+                strokeWidth = 2.dp,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+        } else {
+            Text(
+                text = stringResource(Res.string.auth_sign_in),
+                style = MaterialTheme.typography.labelLarge,
+            )
         }
     }
-    SnackbarHost(
-        hostState = snackbarHostState,
-        modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().imePadding().padding(16.dp),
+
+    Text(
+        text = stringResource(Res.string.auth_demo_hint),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
-    }
 }
 
 @Composable
-private fun AuthHero() {
+private fun AuthHero(modifier: Modifier = Modifier, twoPane: Boolean) {
     val primary = MaterialTheme.colorScheme.primary
     val onPrimary = MaterialTheme.colorScheme.onPrimary
     val sun = MaterialTheme.colorScheme.secondary
 
+    val shape = if (twoPane) RoundedCornerShape(topEnd = 40.dp, bottomEnd = 40.dp)
+    else RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp)
+
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 260.dp, max = 320.dp)
-            .clip(RoundedCornerShape(bottomStart = 40.dp, bottomEnd = 40.dp))
+        modifier = modifier
+            .clip(shape)
             .background(primary),
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val w = size.width
-            val h = size.height
+            // силует займає нижню частину; на високій панелі його висота обмежена шириною
+            val h = minOf(size.height, w * 0.9f)
+            val baseY = size.height
 
             // сонце
-            drawCircle(color = sun.copy(alpha = 0.92f), radius = h * 0.13f, center = Offset(w * 0.80f, h * 0.30f))
+            drawCircle(color = sun.copy(alpha = 0.92f), radius = h * 0.13f, center = Offset(w * 0.80f, baseY - h + h * 0.30f))
 
             // будинки: (x, ширина, висота) у частках розміру полотна
             val skyline = listOf(
@@ -268,7 +311,7 @@ private fun AuthHero() {
                 val left = w * x
                 val bWidth = w * bw
                 val bHeight = h * bh
-                val top = h - bHeight
+                val top = baseY - bHeight
                 drawRect(
                     color = onPrimary.copy(alpha = if (index % 2 == 0) 0.14f else 0.09f),
                     topLeft = Offset(left, top),
@@ -332,7 +375,7 @@ private fun AuthHero() {
                     style = MaterialTheme.typography.bodyLarge,
                     color = onPrimary.copy(alpha = 0.82f),
                 )
-                Spacer(Modifier.height(72.dp))
+                Spacer(Modifier.height(if (twoPane) 24.dp else 72.dp))
             }
         }
     }

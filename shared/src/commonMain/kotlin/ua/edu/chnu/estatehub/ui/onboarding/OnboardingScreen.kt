@@ -37,6 +37,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp as lerpColor
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import org.jetbrains.compose.resources.painterResource
@@ -47,6 +49,8 @@ import ua.edu.chnu.estatehub.resources.Res
 import ua.edu.chnu.estatehub.resources.onboarding_get_started
 import ua.edu.chnu.estatehub.resources.onboarding_next
 import ua.edu.chnu.estatehub.resources.onboarding_skip
+import ua.edu.chnu.estatehub.ui.adaptive.AdaptiveInfo
+import ua.edu.chnu.estatehub.ui.adaptive.rememberAdaptiveInfo
 import kotlin.math.absoluteValue
 
 /** Обгортка MVI: підписується на стан і ефекти ViewModel. */
@@ -72,6 +76,7 @@ fun OnboardingScreen(
     modifier: Modifier = Modifier,
 ) {
     val pages = onboardingPages
+    val adaptive = rememberAdaptiveInfo()
     val pagerState = rememberPagerState(initialPage = state.page, pageCount = { pages.size })
 
     // State -> Pager: кнопка "Далі" змінює state.page, pager плавно прокручується
@@ -118,10 +123,11 @@ fun OnboardingScreen(
                     page = pages[page],
                     pageIndex = page,
                     pagerState = pagerState,
+                    adaptive = adaptive,
                 )
             }
 
-            PagerIndicator(pagerState = pagerState)
+            PagerIndicator(pagerState = pagerState, compact = adaptive.isHeightCompact)
 
             Button(
                 onClick = { onIntent(OnboardingIntent.NextClicked) },
@@ -139,7 +145,7 @@ fun OnboardingScreen(
                 )
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(if (adaptive.isHeightCompact) 12.dp else 32.dp))
         }
     }
 }
@@ -149,80 +155,118 @@ private fun OnboardingPageContent(
     page: OnboardingPage,
     pageIndex: Int,
     pagerState: PagerState,
+    adaptive: AdaptiveInfo,
 ) {
-    Column(
+    if (adaptive.useTwoPane) {
+        // Широкий або низький екран: ілюстрація ліворуч, текст праворуч
+        val size = if (adaptive.isHeightCompact) 180.dp else 280.dp
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 48.dp),
+            horizontalArrangement = Arrangement.spacedBy(48.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(modifier = Modifier.weight(1f).fillMaxHeight(), contentAlignment = Alignment.Center) {
+                PageIllustration(page, pageIndex, pagerState, size)
+            }
+            Column(
+                modifier = Modifier.weight(1f).widthIn(max = 480.dp),
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                PageTexts(page, TextAlign.Start)
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            PageIllustration(page, pageIndex, pagerState, 240.dp)
+            Spacer(Modifier.height(40.dp))
+            PageTexts(page, TextAlign.Center)
+        }
+    }
+}
+
+@Composable
+private fun PageIllustration(
+    page: OnboardingPage,
+    pageIndex: Int,
+    pagerState: PagerState,
+    size: Dp,
+) {
+    Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+            .size(size)
+            .graphicsLayer {
+                val offset = ((pagerState.currentPage - pageIndex) + pagerState.currentPageOffsetFraction)
+                    .absoluteValue
+                    .coerceIn(0f, 1f)
+                alpha = lerp(start = 0.3f, stop = 1f, fraction = 1f - offset)
+                val scale = lerp(start = 0.8f, stop = 1f, fraction = 1f - offset)
+                scaleX = scale
+                scaleY = scale
+            },
+        contentAlignment = Alignment.Center,
     ) {
         Box(
             modifier = Modifier
-                .size(240.dp)
-                .graphicsLayer {
-                    val offset = ((pagerState.currentPage - pageIndex) + pagerState.currentPageOffsetFraction)
-                        .absoluteValue
-                        .coerceIn(0f, 1f)
-                    alpha = lerp(start = 0.3f, stop = 1f, fraction = 1f - offset)
-                    val scale = lerp(start = 0.8f, stop = 1f, fraction = 1f - offset)
-                    scaleX = scale
-                    scaleY = scale
-                },
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(240.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .offset(x = (-8).dp, y = 16.dp)
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondaryContainer),
-            )
-            Box(
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .offset(x = 16.dp, y = (-16).dp)
-                    .size(28.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.secondary),
-            )
-            Icon(
-                painter = painterResource(page.icon),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(112.dp),
-            )
-        }
-
-        Spacer(Modifier.height(40.dp))
-
-        Text(
-            text = stringResource(page.title),
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            textAlign = TextAlign.Center,
+                .size(size)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer),
         )
-        Spacer(Modifier.height(16.dp))
-        Text(
-            text = stringResource(page.description),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.widthIn(max = 480.dp),
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .offset(x = (-8).dp, y = 16.dp)
+                .size(size * 0.2f)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.secondaryContainer),
+        )
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .offset(x = 16.dp, y = (-16).dp)
+                .size(size * 0.12f)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.secondary),
+        )
+        Icon(
+            painter = painterResource(page.icon),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(size * 0.47f),
         )
     }
 }
 
 @Composable
+private fun PageTexts(page: OnboardingPage, align: TextAlign) {
+    Text(
+        text = stringResource(page.title),
+        style = MaterialTheme.typography.headlineMedium,
+        color = MaterialTheme.colorScheme.onBackground,
+        textAlign = align,
+    )
+    Spacer(Modifier.height(16.dp))
+    Text(
+        text = stringResource(page.description),
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = align,
+        modifier = Modifier.widthIn(max = 480.dp),
+    )
+}
+
+@Composable
 private fun PagerIndicator(
     pagerState: PagerState,
+    compact: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val active = MaterialTheme.colorScheme.primary
@@ -231,7 +275,7 @@ private fun PagerIndicator(
     Row(
         modifier = modifier
             .wrapContentHeight()
-            .padding(vertical = 24.dp),
+            .padding(vertical = if (compact) 10.dp else 24.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
