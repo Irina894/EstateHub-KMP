@@ -27,34 +27,6 @@ class OnboardingRepositoryImpl(private val settings: Settings) : OnboardingRepos
     }
 }
 
-<<<<<<< HEAD
-class LocalAuthRepository(private val settings: Settings) : AuthRepository {
-    private val log = Logger.withTag("AuthRepository")
-
-    override suspend fun signIn(username: String, password: String): AuthResult {
-        delay(FAKE_NETWORK_DELAY_MS) // імітація мережевого запиту; delay підтримує скасування
-        settings.putString(KEY_USER, username)
-        log.i { "signed in as $username" }
-        return AuthResult.Success(username)
-    }
-
-    override fun isSignedIn(): Boolean = settings.getStringOrNull(KEY_USER) != null
-
-    override fun currentUser(): String? = settings.getStringOrNull(KEY_USER)
-
-    override fun signOut() {
-        settings.remove(KEY_USER)
-        log.i { "signed out" }
-    }
-
-    private companion object {
-        const val KEY_USER = "signed_in_user"
-        const val FAKE_NETWORK_DELAY_MS = 700L
-    }
-}
-
-=======
->>>>>>> Lab 6: ktor networking, KSafe token storage, auto refresh, MVI auth with snackbar, auth-aware navigation
 class AppSettingsRepositoryImpl(private val store: Settings) : AppSettingsRepository {
     private val log = Logger.withTag("AppSettings")
 

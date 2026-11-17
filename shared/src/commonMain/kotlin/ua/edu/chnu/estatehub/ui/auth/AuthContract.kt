@@ -11,11 +11,7 @@ data class AuthState(
     val passwordError: PasswordError? = null,
     val isPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
-<<<<<<< HEAD
-    val failure: AuthFailure? = null,
-=======
     /** Чи була спроба входу: після неї помилки оновлюються під час введення. */
->>>>>>> Lab 6: ktor networking, KSafe token storage, auto refresh, MVI auth with snackbar, auth-aware navigation
     val submitted: Boolean = false,
 )
 
